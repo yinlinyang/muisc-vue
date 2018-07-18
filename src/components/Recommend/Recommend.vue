@@ -1,11 +1,16 @@
 <template>
-  <div class="recommend" ref="recommend">
-    <Scroll class="recommend-content" :data="discList">
+  <div class="recommend"
+       ref="recommend">
+    <Scroll class="recommend-content"
+            :data="discList">
       <div>
-        <div class="slider-wrapper" v-if="recommends.length">
+        <div class="slider-wrapper"
+             v-if="recommends.length">
           <div class="slider-content">
             <Slider ref="Slider">
-              <div v-for="(item, index) in recommends" :key="index" class="">
+              <div v-for="(item, index) in recommends"
+                   :key="index"
+                   class="">
                 <a :href="item.linkUrl">
                   <img :src="item.picUrl">
                 </a>
@@ -13,23 +18,48 @@
             </Slider>
           </div>
         </div>
+        <div class="recommend-list">
+          <h1 class="list-title">热门歌单推荐</h1>
+          <ul>
+            <li class="item"
+                v-for="(item, index) in discList"
+                :key="index">
+              <div class="icon">
+                <img width="60"
+                     height="60"
+                     v-lazy="item.imgurl">
+              </div>
+              <div class="text">
+                <h2 class="name"
+                    v-html="item.creator.name"></h2>
+                <p class="desc"
+                   v-html="item.dissname"></p>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="loading-container"
+           v-show="!discList.length">
+        <Loading></Loading>
       </div>
     </Scroll>
-    
-    
+
   </div>
 </template>
 
 <script>
-import { getRecommend } from 'api/recommend'
+import { getRecommend, getDiscList } from 'api/recommend'
 import { ERR_OK } from 'api/config'
 import Scroll from 'base/Scroll/Scroll'
 import Slider from 'base/Slider/Slider'
+import Loading from 'base/Loading/Loading'
 
 export default {
   components: {
     Scroll,
     Slider,
+    Loading
   },
   data() {
     return {
@@ -39,12 +69,20 @@ export default {
   },
   created() {
     this._getRecommend()
+    this._getDiscList()
   },
   methods: {
     _getRecommend() {
       getRecommend().then(res => {
-        if(res.code === ERR_OK) {
+        if (res.code === ERR_OK) {
           this.recommends = res.data.slider
+        }
+      })
+    },
+    _getDiscList() {
+      getDiscList().then(res => {
+        if (res.code === ERR_OK) {
+          this.discList = res.data.list
         }
       })
     }
