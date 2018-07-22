@@ -1,4 +1,4 @@
-import {commonParams, ERR_OK, options} from './config'
+import {commonParams, options} from './config'
 import axios from 'axios'
 import jsonp from 'common/js/jsonp'
 
