@@ -11,7 +11,7 @@
 
 <script>
 import Bscroll from 'better-scroll'
-import { addClass } from 'common/js/dom';
+import { addClass } from 'common/js/dom'
 export default {
   props: {
     loop: {
@@ -38,8 +38,21 @@ export default {
       this._setSliderWidth()
       this._initDots()
       this._initSlider()
-    }, 20);
-    
+    }, 20)
+    window.addEventListener('resize', () => {
+      if (!this.slider || !this.slider.enabled) return
+      clearTimeout(this.resizeTimmer)
+      this.resizeTimmer = setTimeout(() => {
+        if (this.slider.isInTransition) {
+          this._onScrollEnd()
+        } else {
+          if (this.autoPlay) {
+            this._play()
+          }
+        }
+        this.refresh()
+      }, 60)
+    })
   },
   methods: {
     _setSliderWidth(isResize) {
@@ -53,7 +66,7 @@ export default {
         element.style.width = sliderWidth + 'px'
         addClass(element, 'slider-item')
         width += sliderWidth
-      });
+      })
       if (this.loop && !isResize) {
         width += sliderWidth * 2
       }
@@ -70,7 +83,7 @@ export default {
         momentum: false, // true的时候会根据滚动的距离开启动画，轮播图的时候需要关闭
         snap: { // slider的配置项
           loop: this.loop,
-          threshold: 0.3, // 
+          threshold: 0.3, //
           speed: 400
         }
       })
@@ -89,7 +102,7 @@ export default {
       clearTimeout(this.timer)
       this.timer = setTimeout(() => {
         this.slider.next()
-      }, this.interval);
+      }, this.interval)
     },
     _onScrollEnd() {
       let pageIndex = this.slider.getCurrentPage().pageX
@@ -98,9 +111,9 @@ export default {
     },
     // DOM结构和 resize时要重新实例话
     refresh() {
-      if(this.slder) {
+      if (this.slider) {
         this._setSliderWidth(true)
-        this.slder.refresh()
+        this.slider.refresh()
       }
     }
   }
